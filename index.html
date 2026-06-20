@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f1115" />
+  <title>包裝單價計算機</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --card: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #e8eaed;
+      --muted: #9aa0a6;
+      --accent: #4ade80;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      line-height: 1.6;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      text-align: center;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; }
+    .tag {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+    }
+    p { color: var(--muted); font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="tag">建置中</span>
+    <h1>包裝單價計算機</h1>
+    <p>將不同包裝容量與外幣計價的商品，統一換算成每 100g 的台幣單價以進行比價。功能開發中。</p>
+  </main>
+</body>
+</html>

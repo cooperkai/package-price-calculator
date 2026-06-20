@@ -1,0 +1,15 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  本專案的所有文件、提案、規格、技術設計和任務清單等所有產出，均必須使用繁體中文（Traditional Chinese）撰寫。
+
+rules:
+  proposal:
+    - 內容必須完全使用中文（繁體中文）撰寫。
+  specs:
+    - 內容與需求說明必須完全使用中文（繁體中文）撰寫。
+  design:
+    - 內容與技術決策說明必須完全使用中文（繁體中文）撰寫。
+  tasks:
+    - 內容與任務描述必須完全使用中文（繁體中文）撰寫。
