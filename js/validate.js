@@ -7,5 +7,14 @@
  * @returns {boolean}
  */
 export function isValidPositiveNumber(raw) {
-  // TODO: 尚未實作 —— 先讓測試失敗（紅燈）
+  if (raw === null || raw === undefined) return false
+  const str = String(raw).trim()
+  if (str === '') return false
+  const n = Number(str)
+  // 非數字字元、含雜符號 → NaN；1e999 → Infinity，皆非有限值
+  if (!Number.isFinite(n)) return false
+  if (n <= 0) return false
+  // 超出安全整數上限視為溢位、不可信
+  if (n > Number.MAX_SAFE_INTEGER) return false
+  return true
 }
