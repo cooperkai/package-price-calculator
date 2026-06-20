@@ -1,5 +1,10 @@
-// 匯率服務（TDD：此刻為空殼，先讓測試亮紅燈，再實作）
-// 對應 openspec exchange-rate-service 規格；task 2.2 / 2.3 實作至綠燈。
+// 匯率服務
+// 對應 openspec exchange-rate-service 規格：正規化、降級鏈、節流、手動鎖定。
+
+import { isValidPositiveNumber } from './validate.js'
+
+// 線上來源依索引對應的標示（主來源 → 備援來源）
+const SOURCE_LABELS = ['primary', 'fallback']
 
 /**
  * 將「1 TWD = X 外幣」的 API 匯率取倒數，正規化為「1 外幣 = N 台幣」正向匯率。
@@ -7,7 +12,7 @@
  * @returns {number} 正向匯率
  */
 export function normalizeRate(apiRate) {
-  // TODO: 尚未實作（紅燈）
+  return 1 / apiRate
 }
 
 /**
@@ -18,7 +23,7 @@ export function normalizeRate(apiRate) {
  * @returns {boolean}
  */
 export function isCacheFresh(lastUpdated, now, maxAgeMs = 24 * 60 * 60 * 1000) {
-  // TODO: 尚未實作（紅燈）
+  return now - lastUpdated < maxAgeMs
 }
 
 /**
@@ -27,7 +32,7 @@ export function isCacheFresh(lastUpdated, now, maxAgeMs = 24 * 60 * 60 * 1000) {
  * @returns {boolean}
  */
 export function isValidManualRate(raw) {
-  // TODO: 尚未實作（紅燈）
+  return isValidPositiveNumber(raw)
 }
 
 /**
@@ -37,7 +42,15 @@ export function isValidManualRate(raw) {
  * @returns {Record<string, {rate:number, locked?:boolean}>}
  */
 export function mergeWithLocks(current, fetched) {
-  // TODO: 尚未實作（紅燈）
+  const merged = {}
+  for (const [code, entry] of Object.entries(current)) {
+    if (entry.locked) {
+      merged[code] = entry // 已鎖定 → 原封保留手動值
+    } else {
+      merged[code] = { ...entry, rate: fetched[code]?.rate ?? entry.rate }
+    }
+  }
+  return merged
 }
 
 /**
@@ -46,5 +59,14 @@ export function mergeWithLocks(current, fetched) {
  * @returns {Promise<{ rates: object, source: 'primary'|'fallback'|'cache'|'default' }>}
  */
 export async function fetchWithFallback({ sources, cache, defaults }) {
-  // TODO: 尚未實作（紅燈）
+  for (let i = 0; i < sources.length; i++) {
+    try {
+      const rates = await sources[i]()
+      return { rates, source: SOURCE_LABELS[i] ?? `source-${i}` }
+    } catch {
+      // 此來源失敗，往下一層降級
+    }
+  }
+  if (cache) return { rates: cache.rates, source: 'cache' }
+  return { rates: defaults, source: 'default' }
 }
