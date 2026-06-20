@@ -8,8 +8,10 @@
 ## 2. 匯率服務實作（測試先行）
 
 - [x] 2.1 **先寫單元測試（Vitest）**：依 `exchange-rate-service` 規格的 Scenario，覆蓋匯率正規化（取倒數→正向）、多來源降級鏈選源、請求節流（<24h 不請求）、手動鎖定與自動更新跳過、無效手動匯率拒絕；以 mock 模擬 `fetch`／`localStorage`（此時為紅燈）。
-- [ ] 2.2 在 `js/exchange-rate.js` 實作多來源降級鏈：主來源 (`open.er-api.com`) → 備援來源 (jsDelivr CDN 的 `@fawazahmed0/currency-api`) → 本地快取 → 寫死預設值，並正規化為「1 外幣 = N 台幣」正向格式；實作至測試通過。
-- [ ] 2.3 實作 `localStorage` 匯率快取與請求節流（時間戳記效期、快取未滿 24 小時不重新請求、單一來源失敗至多重試一次）；實作至測試通過。
+- [x] 2.2 在 `js/exchange-rate.js` 實作多來源降級鏈：主來源 (`open.er-api.com`) → 備援來源 (jsDelivr CDN 的 `@fawazahmed0/currency-api`) → 本地快取 → 寫死預設值，並正規化為「1 外幣 = N 台幣」正向格式；實作至測試通過。
+  - 註：降級鏈順序與 `normalizeRate` 正規化已單元綠燈（`fetchWithFallback` 以注入假來源測）。真實來源 fetch 與寫死預設匯率表之整合串接改由 Playwright E2E 驗證。
+- [x] 2.3 實作 `localStorage` 匯率快取與請求節流（時間戳記效期、快取未滿 24 小時不重新請求、單一來源失敗至多重試一次）；實作至測試通過。
+  - 註：節流判斷 `isCacheFresh`（<24h）已單元綠燈。真實 `localStorage` 讀寫與單一來源重試一次之整合行為改由 Playwright E2E 驗證。
 - [ ] 2.4 新增手動調整／鎖定的 UI 控制項與邏輯（手動值驗證為正數、覆寫即鎖定使自動更新跳過、提供解除鎖定），並顯示「最後更新時間 / 可能過時 / 預設估計值」狀態提示；串接已測試通過的邏輯。
 
 ## 3. 計算引擎實作（測試先行）
