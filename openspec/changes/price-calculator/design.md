@@ -51,6 +51,12 @@
   - `sw.js`（Service Worker）：對靜態資源（`css/style.css`、`js/app.js` 等）以「快取優先（Cache-First）」策略快取，確保離線時瞬間載入。
   - **快取版本管理**：靜態資源快取以版本號命名（如 `price-calc-v1`），每次部署新版即遞增版本號；Service Worker `activate` 事件會清除所有舊版號快取。`index.html` 改採「網路優先（Network-First）」策略，使用者一連上網即可取得最新版本，避免被舊快取卡住。
 
+### 5. 測試策略：Vitest（單元・測試先行 TDD）＋ Playwright（E2E／UI）
+- **核心邏輯模組化**：將計算、單位換算、匯率正規化、輸入驗證、分組與排名、降級鏈決策等純邏輯，抽成可被 import 的純函式模組（如 `js/calc.js`、`js/exchange-rate.js`），與 DOM 操作分離，才能在 Node 環境被測試。
+- **單元測試（Vitest，測試先行）**：純邏輯採 TDD。由於各規格的 Scenario 已含明確輸入與預期輸出，流程為——先將 Scenario 逐條轉成 Vitest 測試（紅燈）→ 實作至全部通過（綠燈）→ 在綠燈保護下重構。可用 jsdom 與 mock 模擬 `localStorage`、`fetch`，以測試快取、降級與鎖定邏輯。
+- **E2E／UI 測試（Playwright）**：難以單元測試的瀏覽器層行為交給 Playwright——離線載入（Service Worker）、響應式版面、PWA 安裝，以及完整使用者流程（輸入→計算→加入列表→最划算高亮）。
+- **與「無建置部署」並存**：Vitest、Playwright 與 `node_modules` 皆為**開發期 devDependencies**，僅於本機／CI 執行，**不會被打包進部署的靜態網站**；GitHub Pages 上線內容仍是純 HTML/CSS/JS、零建置。
+
 ## 風險與權衡 (Risks / Trade-offs)
 
 - **[風險] 匯率 API 超出額度或服務中斷**
