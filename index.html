@@ -4,57 +4,82 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0f1115" />
-  <title>包裝單價計算機</title>
-  <style>
-    :root {
-      --bg: #0f1115;
-      --card: rgba(255, 255, 255, 0.06);
-      --border: rgba(255, 255, 255, 0.12);
-      --text: #e8eaed;
-      --muted: #9aa0a6;
-      --accent: #4ade80;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      line-height: 1.6;
-    }
-    .card {
-      width: 100%;
-      max-width: 420px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 28px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      text-align: center;
-    }
-    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; }
-    .tag {
-      display: inline-block;
-      margin-bottom: 20px;
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      border-radius: 999px;
-    }
-    p { color: var(--muted); font-size: 0.95rem; }
-  </style>
+  <title>比價助手 — 每 100g 台幣單價</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <main class="card">
-    <span class="tag">建置中</span>
-    <h1>包裝單價計算機</h1>
-    <p>將不同包裝容量與外幣計價的商品，統一換算成每 100g 的台幣單價以進行比價。功能開發中。</p>
-  </main>
+  <div class="app">
+    <header>
+      <h1>🛒 比價助手</h1>
+      <p>不同包裝、不同外幣，統一換算成每 100g／100ml 台幣單價</p>
+    </header>
+
+    <!-- 輸入表單 -->
+    <form class="card" id="calc-form">
+      <div class="field">
+        <label for="item-name">商品名稱（可留空）</label>
+        <input type="text" id="item-name" placeholder="例：A 牌白米" />
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="price">價格（外幣）</label>
+          <input type="text" id="price" inputmode="decimal" placeholder="10" />
+        </div>
+        <div class="field">
+          <label for="currency">幣別</label>
+          <select id="currency">
+            <option value="USD">USD</option>
+            <option value="JPY">JPY</option>
+            <option value="EUR">EUR</option>
+            <option value="KRW">KRW</option>
+            <option value="CNY">CNY</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="amount">重量／容量</label>
+          <input type="text" id="amount" inputmode="decimal" placeholder="500" />
+        </div>
+        <div class="field">
+          <label for="unit">單位</label>
+          <select id="unit">
+            <option value="g">G</option>
+            <option value="kg">KG</option>
+            <option value="oz">OZ</option>
+            <option value="lb">LB</option>
+            <option value="ml">ML</option>
+            <option value="l">L</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="rate">匯率（1 外幣 = N 台幣，暫手動輸入）</label>
+        <input type="text" id="rate" inputmode="decimal" placeholder="31.25" />
+      </div>
+
+      <div class="row">
+        <div class="field"><button type="submit" id="calc-btn">計算單價</button></div>
+        <div class="field"><button type="button" class="secondary" id="add-btn">加入比價列表</button></div>
+      </div>
+
+      <div class="result" id="result" aria-live="polite"></div>
+    </form>
+
+    <!-- 比價列表 -->
+    <section class="card">
+      <div class="row" style="justify-content: space-between; align-items: center;">
+        <strong>比價列表</strong>
+        <button type="button" class="secondary del" id="clear-btn" style="width:auto;">清空</button>
+      </div>
+      <div id="history"></div>
+    </section>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
