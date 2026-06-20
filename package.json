@@ -1,0 +1,15 @@
+{
+  "name": "package-price-calculator",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "將不同包裝容量與外幣計價的商品換算成每 100g 台幣單價的比價 PWA",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.9"
+  }
+}
