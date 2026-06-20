@@ -42,6 +42,28 @@
 
 ---
 
+## 🧪 本地開發與測試
+
+> ⚠️ **只是想使用 App** 的話不需要這一段——本網站是純靜態 HTML/CSS/JS，直接開 `index.html` 或瀏覽 GitHub Pages 即可，無須安裝任何東西。
+> 以下僅針對**要跑測試或參與開發**的情境。
+
+**需求**
+- Node.js **>= 22.12.0**（專案附 `.nvmrc`，使用 nvm 者可直接 `nvm use`）
+
+**步驟**
+```bash
+# 1. 還原開發依賴（node_modules 不在 repo 內，需自行安裝）
+npm install
+
+# 2. 跑單元測試（Vitest）
+npm test
+
+# 監看模式：存檔自動重跑
+npm run test:watch
+```
+
+測試採「測試先行（TDD）」：純邏輯（計算、單位換算、驗證、匯率、比價）以 Vitest 撰寫單元測試，UI／離線／響應式則交由 Playwright 進行 E2E。詳見 `openspec/changes/price-calculator/design.md` 決策 #5。
+
 ## 🚀 部署至 GitHub Pages
 
 由於本專案完全基於靜態網頁技術（純 HTML, CSS, JavaScript），沒有任何建置或編譯步驟，您可以直接將程式碼上傳至 GitHub 儲存庫，並在儲存庫的 **Settings > Pages** 中開啟 GitHub Pages 服務，即可獲得一個專屬的網頁連結在手機上使用！
