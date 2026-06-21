@@ -5,6 +5,7 @@
   "type": "module",
   "description": "將不同包裝容量與外幣計價的商品換算成每 100g 台幣單價的比價 PWA",
   "scripts": {
+    "dev": "node tools/serve.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test"
