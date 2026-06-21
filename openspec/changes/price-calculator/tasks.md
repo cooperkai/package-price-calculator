@@ -49,5 +49,6 @@
   - 註：`e2e/user-flow.spec.js` 4 案——計算顯示每 100g、加兩項高亮最划算、重量/容量分組各自評選、刪除與一鍵清空。`npm run test:e2e` 全綠（含 smoke 共 5 passed）。
 - [x] 6.2 撰寫 Playwright E2E：離線情境——Service Worker 快取後斷網仍能載入並正常運作。
   - 註：`e2e/pwa.spec.js` 3 案——SW 註冊與版本化預快取、manifest/圖示連結、斷網重載仍可載入並計算。`npm run test:e2e` 全綠（共 8 passed）。
-- [ ] 6.3 撰寫 Playwright E2E／視覺檢查：響應式版面（<600px 手機）與 PWA 安裝（manifest、新增至主畫面）。
+- [x] 6.3 撰寫 Playwright E2E／視覺檢查：響應式版面（<600px 手機）與 PWA 安裝（manifest、新增至主畫面）。
+  - 註：`e2e/responsive.spec.js` 5 案——手機 360px 無水平溢出、互動元件觸控目標 ≥44px 且 select 與 input 同高（鎖定原生渲染不一致的修正）、select 已關原生外觀（appearance:none）、行動優先 min-width:600 寬螢幕加大外距、manifest 具備 A2HS 可安裝欄位（name/short_name/start_url/standalone/theme/background/192+512+maskable 圖示）。`npm run test:e2e` 全綠（共 13 passed）。
 - [ ] 6.4 部署前確認：`npm test`（Vitest 單元）與 `npm run test:e2e`（Playwright）全綠，並於實機行動裝置抽驗。
