@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#0f1115" />
   <title>比價助手 — 每 100g 台幣單價</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <!-- PWA：安裝設定與圖示（task 1.3）。相對路徑相容 GitHub Pages 子路徑 -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 </head>
 <body>
   <div class="app">
@@ -82,5 +85,13 @@
   </div>
 
   <script type="module" src="js/main.js"></script>
+  <!-- 註冊 Service Worker（task 5.3）。相對路徑使 scope 隨部署路徑自動對應 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch((err) => console.error('SW 註冊失敗', err))
+      })
+    }
+  </script>
 </body>
 </html>

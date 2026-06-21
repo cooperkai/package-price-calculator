@@ -1,8 +1,10 @@
 ## 1. 專案初始化與 HTML 結構
 
-- [ ] 1.1 建立基本的專案目錄結構（根目錄、`/css`、`/js`、圖示資料夾）。
+- [x] 1.1 建立基本的專案目錄結構（根目錄、`/css`、`/js`、圖示資料夾）。
+  - 註：`css/`、`js/` 早已建立；本次補 `icons/`（`icon.svg` 來源 + `icon-192/512.png`，由 `tools/render-icons.mjs` 渲染）。
 - [x] 1.2 在 `index.html` 中撰寫核心 HTML 結構，包含表單輸入項、歷史比價表格、以及腳本與樣式表的引入。
-- [ ] 1.3 建立用於 PWA 安裝與設定的 `manifest.json` 設定檔。
+- [x] 1.3 建立用於 PWA 安裝與設定的 `manifest.json` 設定檔。
+  - 註：`manifest.json`（名稱、short_name、display standalone、theme/background color、192/512 含 maskable 圖示），相對 `start_url`/`scope` 相容 GitHub Pages 子路徑；`index.html` 加 `link rel=manifest` 與 `apple-touch-icon`。
 - [x] 1.4 建立測試環境：新增 `package.json`，安裝 dev 依賴 **Vitest**（單元測試）與 **Playwright**（E2E），設定 `npm test` 與 `npm run test:e2e` 指令；確認 `node_modules` 已被 `.gitignore` 排除、不影響靜態部署。
   - 註：`@playwright/test@1.61.0` 列入 devDependencies；新增 `playwright.config.js`（E2E 自動起本機靜態伺服器、testDir `e2e/`）與 `vitest.config.js`（單元只收 `js/**/*.test.js`，與 E2E `*.spec.js` 切開）。`e2e/smoke.spec.js` 冒煙測試驗證 `npm run test:e2e` 可跑。`.gitignore` 補排除 Playwright 產出物。`npm test` 54 綠、`npm run test:e2e` 1 綠。
 
@@ -36,12 +38,14 @@
 
 - [ ] 5.1 使用 CSS 變數設計現代化的 UI 主題（深色模式、毛玻璃卡片、響應式 Flex/Grid 版面），字型採系統字型堆疊（不載入任何網路字型）。
 - [ ] 5.2 撰寫行動優先的媒體查詢（Media Queries），以支援單手在手機上流暢操作。
-- [ ] 5.3 撰寫 Service Worker (`sw.js`) 並在網頁中註冊，實現離線快取：以版本號命名快取、`activate` 時清除舊版號快取、`index.html` 採網路優先（Network-First）策略以便部署新版後即時更新。
+- [x] 5.3 撰寫 Service Worker (`sw.js`) 並在網頁中註冊，實現離線快取：以版本號命名快取、`activate` 時清除舊版號快取、`index.html` 採網路優先（Network-First）策略以便部署新版後即時更新。
+  - 註：`sw.js` 快取名 `price-calc-v1`、install 預快取靜態資源、activate 清非當前版本、導航/`index.html` 網路優先其餘快取優先；`index.html` 以相對路徑註冊。整合行為由 `e2e/pwa.spec.js`（task 6.2）驗證。
 
 ## 6. E2E／UI 測試與部署準備
 
 - [x] 6.1 撰寫 Playwright E2E：完整使用者流程（輸入 → 計算 → 加入比價列表 → 最划算高亮）。
   - 註：`e2e/user-flow.spec.js` 4 案——計算顯示每 100g、加兩項高亮最划算、重量/容量分組各自評選、刪除與一鍵清空。`npm run test:e2e` 全綠（含 smoke 共 5 passed）。
-- [ ] 6.2 撰寫 Playwright E2E：離線情境——Service Worker 快取後斷網仍能載入並正常運作。
+- [x] 6.2 撰寫 Playwright E2E：離線情境——Service Worker 快取後斷網仍能載入並正常運作。
+  - 註：`e2e/pwa.spec.js` 3 案——SW 註冊與版本化預快取、manifest/圖示連結、斷網重載仍可載入並計算。`npm run test:e2e` 全綠（共 8 passed）。
 - [ ] 6.3 撰寫 Playwright E2E／視覺檢查：響應式版面（<600px 手機）與 PWA 安裝（manifest、新增至主畫面）。
 - [ ] 6.4 部署前確認：`npm test`（Vitest 單元）與 `npm run test:e2e`（Playwright）全綠，並於實機行動裝置抽驗。
