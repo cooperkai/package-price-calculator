@@ -120,6 +120,21 @@ input:focus, select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
 }
+/* select：關掉原生外觀，改用自繪箭頭，使其與 input 同高同字級（行動裝置原生
+ * 渲染會讓 select 大小、箭頭與 input 不一致、甚至箭頭擠出框外，故統一接管）。 */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* 右側留白容納自繪箭頭，避免選取文字壓到箭頭或溢出框寬 */
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239aa0a6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--sp-3) center;
+  background-size: 12px 8px;
+  text-overflow: ellipsis;
+}
+select::-ms-expand { display: none; } /* 舊版 Edge/IE 隱藏原生箭頭 */
 /* 下拉展開的選項清單（OS 渲染）也維持深底亮字，避免看不清選取項 */
 option { background: var(--bg-elev); color: var(--text); }
 
