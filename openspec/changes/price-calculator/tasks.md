@@ -40,7 +40,8 @@
 
 ## 6. E2E／UI 測試與部署準備
 
-- [ ] 6.1 撰寫 Playwright E2E：完整使用者流程（輸入 → 計算 → 加入比價列表 → 最划算高亮）。
+- [x] 6.1 撰寫 Playwright E2E：完整使用者流程（輸入 → 計算 → 加入比價列表 → 最划算高亮）。
+  - 註：`e2e/user-flow.spec.js` 4 案——計算顯示每 100g、加兩項高亮最划算、重量/容量分組各自評選、刪除與一鍵清空。`npm run test:e2e` 全綠（含 smoke 共 5 passed）。
 - [ ] 6.2 撰寫 Playwright E2E：離線情境——Service Worker 快取後斷網仍能載入並正常運作。
 - [ ] 6.3 撰寫 Playwright E2E／視覺檢查：響應式版面（<600px 手機）與 PWA 安裝（manifest、新增至主畫面）。
 - [ ] 6.4 部署前確認：`npm test`（Vitest 單元）與 `npm run test:e2e`（Playwright）全綠，並於實機行動裝置抽驗。
