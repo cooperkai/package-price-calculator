@@ -54,6 +54,25 @@ export function mergeWithLocks(current, fetched) {
 }
 
 /**
+ * 依匯率來源與快取時效，產生 UI 用的狀態描述（不含時間格式化，由介面層套用語系）。
+ * - default：退回內建預設值 → 預設估計值，請手動校正
+ * - cache 或快取已逾效期 → 可能過時（仍顯示最後更新時間）
+ * - 線上來源成功且仍新鮮 → 已更新
+ * @param {{ source:'primary'|'fallback'|'cache'|'default', lastUpdated:number|null, now:number }} input
+ * @param {number} [maxAgeMs] 效期，預設 24 小時
+ * @returns {{ level:'fresh'|'stale'|'default', message:string, showTime:boolean }}
+ */
+export function describeRateStatus({ source, lastUpdated, now }, maxAgeMs = 24 * 60 * 60 * 1000) {
+  if (source === 'default' || lastUpdated == null) {
+    return { level: 'default', message: '預設估計值，請手動校正', showTime: false }
+  }
+  if (source === 'cache' || !isCacheFresh(lastUpdated, now, maxAgeMs)) {
+    return { level: 'stale', message: '匯率可能過時', showTime: true }
+  }
+  return { level: 'fresh', message: '匯率已更新', showTime: true }
+}
+
+/**
  * 多來源降級鏈：依序嘗試各線上來源，全部失敗則退回快取，無快取再退回預設值。
  * @param {{ sources: Array<() => Promise<object>>, cache: {rates:object}|null, defaults: object }} deps
  * @returns {Promise<{ rates: object, source: 'primary'|'fallback'|'cache'|'default' }>}

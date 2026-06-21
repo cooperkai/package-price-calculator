@@ -12,7 +12,8 @@
   - 註：降級鏈順序與 `normalizeRate` 正規化已單元綠燈（`fetchWithFallback` 以注入假來源測）。真實來源 fetch 與寫死預設匯率表之整合串接改由 Playwright E2E 驗證。
 - [x] 2.3 實作 `localStorage` 匯率快取與請求節流（時間戳記效期、快取未滿 24 小時不重新請求、單一來源失敗至多重試一次）；實作至測試通過。
   - 註：節流判斷 `isCacheFresh`（<24h）已單元綠燈。真實 `localStorage` 讀寫與單一來源重試一次之整合行為改由 Playwright E2E 驗證。
-- [ ] 2.4 新增手動調整／鎖定的 UI 控制項與邏輯（手動值驗證為正數、覆寫即鎖定使自動更新跳過、提供解除鎖定），並顯示「最後更新時間 / 可能過時 / 預設估計值」狀態提示；串接已測試通過的邏輯。
+- [x] 2.4 新增手動調整／鎖定的 UI 控制項與邏輯（手動值驗證為正數、覆寫即鎖定使自動更新跳過、提供解除鎖定），並顯示「最後更新時間 / 可能過時 / 預設估計值」狀態提示；串接已測試通過的邏輯。
+  - 註：新增純邏輯 `describeRateStatus`（來源＋時效 → fresh/stale/default 狀態）已單元綠燈。`main.js` 以 `DEFAULT_RATES` 種入每幣別匯率狀態，手動輸入即 `applyManualRate` 鎖定、提供解除鎖定還原預設，狀態列重用 `describeRateStatus` 與 `isValidManualRate`。真實線上 fetch、`mergeWithLocks` 自動更新串接與 `localStorage` 持久化屬整合層，交 Playwright E2E（task 6.x）。
 
 ## 3. 計算引擎實作（測試先行）
 
