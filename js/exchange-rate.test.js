@@ -5,6 +5,7 @@ import {
   isValidManualRate,
   mergeWithLocks,
   fetchWithFallback,
+  describeRateStatus,
 } from './exchange-rate.js'
 
 // 依 exchange-rate-service 規格的 Scenario 逐條轉成測試（此刻 exchange-rate.js 尚未實作 → 紅燈）
@@ -54,6 +55,37 @@ describe('手動鎖定：自動更新跳過已鎖定貨幣', () => {
     expect(merged.USD.rate).toBe(33.1) // 鎖定 → 不被覆蓋
     expect(merged.USD.locked).toBe(true)
     expect(merged.JPY.rate).toBe(0.22) // 未鎖定 → 更新
+  })
+})
+
+describe('匯率狀態提示：依來源與快取時效呈現「已更新／可能過時／預設估計值」', () => {
+  const now = 1_000_000_000_000
+  const hourAgo = now - 60 * 60 * 1000
+  const twoDaysAgo = now - 48 * 60 * 60 * 1000
+
+  it('線上來源成功且快取新鮮 → fresh，需顯示更新時間', () => {
+    const s = describeRateStatus({ source: 'primary', lastUpdated: hourAgo, now })
+    expect(s.level).toBe('fresh')
+    expect(s.showTime).toBe(true)
+  })
+
+  it('改用本地快取（線上失敗）→ stale，提示可能過時並顯示時間', () => {
+    const s = describeRateStatus({ source: 'cache', lastUpdated: hourAgo, now })
+    expect(s.level).toBe('stale')
+    expect(s.showTime).toBe(true)
+    expect(s.message).toContain('過時')
+  })
+
+  it('來源新鮮但快取已超過 24 小時 → 也視為 stale', () => {
+    const s = describeRateStatus({ source: 'primary', lastUpdated: twoDaysAgo, now })
+    expect(s.level).toBe('stale')
+  })
+
+  it('退回內建預設值 → default，標示預設估計值且不顯示時間', () => {
+    const s = describeRateStatus({ source: 'default', lastUpdated: null, now })
+    expect(s.level).toBe('default')
+    expect(s.showTime).toBe(false)
+    expect(s.message).toContain('預設')
   })
 })
 
