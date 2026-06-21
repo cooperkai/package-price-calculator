@@ -51,4 +51,5 @@
   - 註：`e2e/pwa.spec.js` 3 案——SW 註冊與版本化預快取、manifest/圖示連結、斷網重載仍可載入並計算。`npm run test:e2e` 全綠（共 8 passed）。
 - [x] 6.3 撰寫 Playwright E2E／視覺檢查：響應式版面（<600px 手機）與 PWA 安裝（manifest、新增至主畫面）。
   - 註：`e2e/responsive.spec.js` 5 案——手機 360px 無水平溢出、互動元件觸控目標 ≥44px 且 select 與 input 同高（鎖定原生渲染不一致的修正）、select 已關原生外觀（appearance:none）、行動優先 min-width:600 寬螢幕加大外距、manifest 具備 A2HS 可安裝欄位（name/short_name/start_url/standalone/theme/background/192+512+maskable 圖示）。`npm run test:e2e` 全綠（共 13 passed）。
-- [ ] 6.4 部署前確認：`npm test`（Vitest 單元）與 `npm run test:e2e`（Playwright）全綠，並於實機行動裝置抽驗。
+- [x] 6.4 部署前確認：`npm test`（Vitest 單元）與 `npm run test:e2e`（Playwright）全綠，並於實機行動裝置抽驗。
+  - 註：`npm test` 54 綠、`npm run test:e2e` 13 綠。部署改為 GitHub Actions 自動化：push main → 自動把 commit 短雜湊 stamp 進 `sw.js` 再部署到 Pages（`.github/workflows/deploy.yml` + `tools/bump-sw.mjs`），解決「改了 CSS/JS 卻沒換 SW 版本號→舊用戶吃舊快取」問題。實機（iOS/Android Chrome）抽驗線上版通過：計算/比價/最划算/刪除清空、單手無橫向捲動、離線可用皆正常。已知非 bug：iOS 原生 select 打開的選單寬度/配色不可由 CSS 控制（WebKit 限制）；iOS 加入主畫面須用 Safari（Apple 限制）。
