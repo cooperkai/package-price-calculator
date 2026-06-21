@@ -3,7 +3,8 @@
 - [ ] 1.1 建立基本的專案目錄結構（根目錄、`/css`、`/js`、圖示資料夾）。
 - [x] 1.2 在 `index.html` 中撰寫核心 HTML 結構，包含表單輸入項、歷史比價表格、以及腳本與樣式表的引入。
 - [ ] 1.3 建立用於 PWA 安裝與設定的 `manifest.json` 設定檔。
-- [ ] 1.4 建立測試環境：新增 `package.json`，安裝 dev 依賴 **Vitest**（單元測試）與 **Playwright**（E2E），設定 `npm test` 與 `npm run test:e2e` 指令；確認 `node_modules` 已被 `.gitignore` 排除、不影響靜態部署。
+- [x] 1.4 建立測試環境：新增 `package.json`，安裝 dev 依賴 **Vitest**（單元測試）與 **Playwright**（E2E），設定 `npm test` 與 `npm run test:e2e` 指令；確認 `node_modules` 已被 `.gitignore` 排除、不影響靜態部署。
+  - 註：`@playwright/test@1.61.0` 列入 devDependencies；新增 `playwright.config.js`（E2E 自動起本機靜態伺服器、testDir `e2e/`）與 `vitest.config.js`（單元只收 `js/**/*.test.js`，與 E2E `*.spec.js` 切開）。`e2e/smoke.spec.js` 冒煙測試驗證 `npm run test:e2e` 可跑。`.gitignore` 補排除 Playwright 產出物。`npm test` 54 綠、`npm run test:e2e` 1 綠。
 
 ## 2. 匯率服務實作（測試先行）
 
