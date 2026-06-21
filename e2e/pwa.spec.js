@@ -31,9 +31,9 @@ test.describe('PWA 離線支援（task 6.2）', () => {
       }
     })
 
-    // 快取名稱以版本號命名（price-calc-vX）
+    // 快取名稱以版本號命名（price-calc-<git 短雜湊>，由 npm run bump-sw 寫入）
     expect(cache.names).toHaveLength(1)
-    expect(cache.names[0]).toMatch(/^price-calc-v\d+$/)
+    expect(cache.names[0]).toMatch(/^price-calc-[0-9a-f]{7,40}$/)
     // 關鍵資源都已預快取
     expect(cache.index).toBe(true)
     expect(cache.main).toBe(true)
