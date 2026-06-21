@@ -1,7 +1,8 @@
-/* 比價助手 — 現代化深色主題（task 5.1）
+/* 比價助手 — 現代化深色主題（task 5.1）＋ 行動優先版面（task 5.2）
  * 以 CSS 變數統一管理色彩、間距、圓角、過渡與陰影；
  * 毛玻璃卡片（backdrop-filter）+ 環境光背景營造高級質感；
- * 版面採 Flex/Grid 流式設計，行動裝置媒體查詢見 task 5.2。 */
+ * 行動優先：base 樣式以手機為準（緊湊內距、44px 觸控目標），
+ * 較寬螢幕再用 min-width 媒體查詢加大（見檔末）。 */
 :root {
   /* 色彩 */
   --bg: #0d0f14;
@@ -55,7 +56,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  padding: var(--sp-6) var(--sp-4);
+  padding: var(--sp-4) var(--sp-3); /* 手機 base，較寬螢幕於 min-width 加大 */
   display: flex;
   justify-content: center;
 }
@@ -64,7 +65,7 @@ body {
 
 header { text-align: center; margin-bottom: var(--sp-5); }
 header h1 {
-  font-size: 1.55rem;
+  font-size: 1.4rem; /* 手機 base */
   font-weight: 700;
   letter-spacing: -0.01em;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -79,7 +80,7 @@ header p { color: var(--muted); font-size: 0.85rem; margin-top: var(--sp-1); }
   background: linear-gradient(180deg, var(--card-hi), var(--card));
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  padding: var(--sp-5);
+  padding: var(--sp-4); /* 手機 base，較寬螢幕於 min-width 加大 */
   margin-bottom: var(--sp-4);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(16px) saturate(140%);
@@ -103,7 +104,8 @@ header p { color: var(--muted); font-size: 0.85rem; margin-top: var(--sp-1); }
 input, select, button {
   width: 100%;
   padding: 11px var(--sp-3);
-  font-size: 1rem;
+  min-height: 44px; /* 觸控目標 ≥44px，拇指好按（行動優先 task 5.2） */
+  font-size: 1rem;  /* ≥16px 避免 iOS Safari 聚焦自動放大 */
   font-family: inherit;
   color: var(--text);
   background: var(--bg-elev);
@@ -145,7 +147,7 @@ button.secondary:hover { background: var(--card-hi); border-color: var(--border-
 .rate-status.default { color: var(--warn); }     /* 預設估計值 → 提醒手動校正 */
 .rate-status.locked { color: var(--accent); }    /* 已鎖定手動值 → 強調色 */
 .link-btn {
-  width: auto; padding: 0; font-size: 0.75rem;
+  width: auto; padding: 0; min-height: auto; font-size: 0.75rem;
   background: none; border: none; color: var(--accent);
   text-decoration: underline; cursor: pointer;
 }
@@ -186,6 +188,25 @@ tr.best:hover { background: var(--best); }
 .del:hover { background: rgba(248, 113, 113, 0.14); box-shadow: none; filter: none; }
 .group-title { font-size: 0.8rem; color: var(--muted); margin: var(--sp-3) 0 var(--sp-1); font-weight: 500; }
 .empty { color: var(--muted); text-align: center; padding: var(--sp-4) 0; }
+
+/* ── 行動優先媒體查詢（task 5.2） ──
+ * base 以上皆為手機樣式；以下用 min-width 為較寬螢幕「向上增強」，
+ * 並對極窄機做表格緊湊化，確保單手在手機上流暢操作。 */
+
+/* 平板／桌機（≥600px）：加大留白與標題，回復寬鬆的高級感 */
+@media (min-width: 600px) {
+  body { padding: var(--sp-6) var(--sp-4); }
+  .card { padding: var(--sp-5); }
+  header h1 { font-size: 1.55rem; }
+}
+
+/* 極窄機（≤360px）：壓縮欄距與表格字級，避免擁擠或溢出 */
+@media (max-width: 360px) {
+  .row { gap: var(--sp-2); }
+  table { font-size: 0.8rem; }
+  th, td { padding: 8px var(--sp-1); }
+  .del { padding: 3px var(--sp-1); }
+}
 
 /* 尊重使用者「減少動態效果」偏好 */
 @media (prefers-reduced-motion: reduce) {
