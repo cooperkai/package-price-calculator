@@ -65,6 +65,13 @@ button {
 }
 button.secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
 
+/* 匯率狀態提示（task 2.4）：依 describeRateStatus 的 level 上色 */
+.rate-status { margin-top: 6px; font-size: 0.75rem; color: var(--muted); min-height: 1.2em; }
+.rate-status.stale { color: #fbbf24; }      /* 可能過時 → 琥珀色警示 */
+.rate-status.default { color: #fbbf24; }     /* 預設估計值 → 提醒手動校正 */
+.rate-status.locked { color: var(--accent); } /* 已鎖定手動值 → 強調色 */
+.link-btn { width: auto; padding: 0; font-size: 0.75rem; background: none; border: none; color: var(--accent); text-decoration: underline; cursor: pointer; }
+
 .result { margin-top: 12px; font-size: 0.95rem; min-height: 1.6em; }
 .result.error { color: var(--danger); }
 .result strong { color: var(--accent); font-size: 1.2rem; }
