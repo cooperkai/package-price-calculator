@@ -1,0 +1,57 @@
+# 部署到 GitHub Pages（task 6.4）。
+# push 到 main 即自動：把 sw.js 的快取版本 stamp 成此次 commit 的短雜湊 →
+# 組裝靜態網站 → 部署。如此每次部署都會換 SW 版本、觸發重新預快取並清舊版，
+# 使用者不會吃到舊快取，且毋需人工記得跑任何指令。
+name: 部署 GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # 也可在 Actions 頁面手動觸發
+
+# 部署 Pages 所需權限（用內建 GITHUB_TOKEN，與個人 PAT 無關）
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時間只跑一個部署；新 push 進來就取消進行中的舊部署
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 取出原始碼
+        uses: actions/checkout@v4
+
+      - name: 安裝 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 將 SW 快取版本 stamp 成此次 commit 短雜湊
+        run: node tools/bump-sw.mjs
+
+      - name: 組裝靜態網站（只收部署所需檔案）
+        run: |
+          mkdir -p _site
+          cp index.html manifest.json sw.js _site/
+          cp -r css js icons _site/
+
+      - name: 設定 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上傳網站產物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

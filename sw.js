@@ -2,7 +2,11 @@
 // - 快取以版本號命名；activate 時清除所有非當前版本快取。
 // - index.html / 導航請求採「網路優先」，部署新版可即時更新；離線才回退快取。
 // - 其餘靜態資源採「快取優先」，求離線可用與秒開。
-const VERSION = 'v1'
+// VERSION 為部署時的 git commit 短雜湊，由 GitHub Actions 部署流程
+// （.github/workflows/deploy.yml）於部署當下自動執行 `npm run bump-sw` 寫入，
+// 故每次 push 都會換版本號、觸發重新預快取並清舊版，毋需人工記得。
+// 此處留存的值僅為占位（本機開發用）；線上實際以部署當下的 commit 為準。
+const VERSION = '0cf271f'
 const CACHE = `price-calc-${VERSION}`
 
 // 預先快取的靜態資源（相對路徑，相容 GitHub Pages 子路徑）
