@@ -64,6 +64,12 @@ npm test
 
 # 監看模式：存檔自動重跑
 npm run test:watch
+
+# 3. 首次跑 E2E 前，需下載 Playwright 瀏覽器（僅需一次，不會進 repo）
+npx playwright install chromium
+
+# 4. 跑 E2E（Playwright，會自動起本機靜態伺服器）
+npm run test:e2e
 ```
 
 測試採「測試先行（TDD）」：純邏輯（計算、單位換算、驗證、匯率、比價）以 Vitest 撰寫單元測試，UI／離線／響應式則交由 Playwright 進行 E2E。詳見 `openspec/changes/price-calculator/design.md` 決策 #5。
