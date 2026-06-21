@@ -12,3 +12,9 @@ desktop.ini
 # 記錄與暫存
 *.log
 node_modules/
+
+# Playwright E2E 產出物（task 1.4）
+playwright-report/
+test-results/
+/blob-report/
+.last-run.json
