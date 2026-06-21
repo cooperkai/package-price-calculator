@@ -1,87 +1,193 @@
-/* 比價助手 — 基礎樣式（深色 + 毛玻璃；完整美化見 task 5.1） */
+/* 比價助手 — 現代化深色主題（task 5.1）
+ * 以 CSS 變數統一管理色彩、間距、圓角、過渡與陰影；
+ * 毛玻璃卡片（backdrop-filter）+ 環境光背景營造高級質感；
+ * 版面採 Flex/Grid 流式設計，行動裝置媒體查詢見 task 5.2。 */
 :root {
-  --bg: #0f1115;
-  --card: rgba(255, 255, 255, 0.06);
+  /* 色彩 */
+  --bg: #0d0f14;
+  --bg-elev: #1b1f27;
+  --card: rgba(255, 255, 255, 0.055);
+  --card-hi: rgba(255, 255, 255, 0.09);
   --border: rgba(255, 255, 255, 0.12);
+  --border-hi: rgba(255, 255, 255, 0.22);
   --text: #e8eaed;
   --muted: #9aa0a6;
   --accent: #4ade80;
+  --accent-2: #22d3ee;
+  --warn: #fbbf24;
   --best: rgba(74, 222, 128, 0.16);
+  --best-line: rgba(74, 222, 128, 0.45);
   --danger: #f87171;
+
+  /* 間距尺度 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+
+  /* 圓角 */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-pill: 999px;
+
+  /* 過渡與陰影 */
+  --t-fast: 120ms ease;
+  --t-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 4px 14px rgba(74, 222, 128, 0.28);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { min-height: 100%; }
+
 body {
   background: var(--bg);
+  /* 環境光：兩團柔和色暈讓毛玻璃模糊有東西可糊，增加景深 */
+  background-image:
+    radial-gradient(60% 50% at 15% 0%, rgba(74, 222, 128, 0.12), transparent 70%),
+    radial-gradient(55% 45% at 100% 10%, rgba(34, 211, 238, 0.10), transparent 70%);
+  background-attachment: fixed;
   color: var(--text);
-  font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
   line-height: 1.6;
-  padding: 24px 16px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  padding: var(--sp-6) var(--sp-4);
   display: flex;
   justify-content: center;
 }
 
 .app { width: 100%; max-width: 520px; }
 
-header { text-align: center; margin-bottom: 20px; }
-header h1 { font-size: 1.4rem; font-weight: 600; }
-header p { color: var(--muted); font-size: 0.85rem; }
+header { text-align: center; margin-bottom: var(--sp-5); }
+header h1 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+header p { color: var(--muted); font-size: 0.85rem; margin-top: var(--sp-1); }
 
 .card {
-  background: var(--card);
+  position: relative;
+  background: linear-gradient(180deg, var(--card-hi), var(--card));
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-4);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+/* 卡片頂緣高光，強化玻璃稜邊質感 */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
 }
 
-.field { margin-bottom: 12px; }
-.field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
-.row { display: flex; gap: 10px; }
+.field { margin-bottom: var(--sp-3); }
+.field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: var(--sp-1); }
+.row { display: flex; gap: var(--sp-3); }
 .row .field { flex: 1; }
 
 input, select, button {
   width: 100%;
-  padding: 10px 12px;
+  padding: 11px var(--sp-3);
   font-size: 1rem;
+  font-family: inherit;
   color: var(--text);
-  background: #1b1f27;
+  background: var(--bg-elev);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
+  transition: border-color var(--t-base), box-shadow var(--t-base), background var(--t-base);
 }
-input:focus, select:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+input::placeholder { color: var(--muted); opacity: 0.7; }
+input:hover, select:hover { border-color: var(--border-hi); }
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
+}
 /* 下拉展開的選項清單（OS 渲染）也維持深底亮字，避免看不清選取項 */
-option { background: #1b1f27; color: var(--text); }
+option { background: var(--bg-elev); color: var(--text); }
 
 button {
   cursor: pointer;
   font-weight: 600;
-  background: var(--accent);
-  color: #0f1115;
+  background: linear-gradient(135deg, var(--accent), #38d96f);
+  color: #0c1410;
   border: none;
+  transition: transform var(--t-fast), box-shadow var(--t-base), filter var(--t-base);
 }
-button.secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+button:hover { box-shadow: var(--shadow-pop); filter: brightness(1.05); }
+button:active { transform: translateY(1px); }
+button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+button.secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+button.secondary:hover { background: var(--card-hi); border-color: var(--border-hi); box-shadow: none; filter: none; }
 
 /* 匯率狀態提示（task 2.4）：依 describeRateStatus 的 level 上色 */
-.rate-status { margin-top: 6px; font-size: 0.75rem; color: var(--muted); min-height: 1.2em; }
-.rate-status.stale { color: #fbbf24; }      /* 可能過時 → 琥珀色警示 */
-.rate-status.default { color: #fbbf24; }     /* 預設估計值 → 提醒手動校正 */
-.rate-status.locked { color: var(--accent); } /* 已鎖定手動值 → 強調色 */
-.link-btn { width: auto; padding: 0; font-size: 0.75rem; background: none; border: none; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.rate-status { margin-top: var(--sp-2); font-size: 0.75rem; color: var(--muted); min-height: 1.2em; }
+.rate-status.stale { color: var(--warn); }      /* 可能過時 → 琥珀色警示 */
+.rate-status.default { color: var(--warn); }     /* 預設估計值 → 提醒手動校正 */
+.rate-status.locked { color: var(--accent); }    /* 已鎖定手動值 → 強調色 */
+.link-btn {
+  width: auto; padding: 0; font-size: 0.75rem;
+  background: none; border: none; color: var(--accent);
+  text-decoration: underline; cursor: pointer;
+}
+.link-btn:hover { color: var(--accent-2); box-shadow: none; filter: none; }
 
-.result { margin-top: 12px; font-size: 0.95rem; min-height: 1.6em; }
+.result {
+  margin-top: var(--sp-3);
+  font-size: 0.95rem;
+  min-height: 1.6em;
+}
 .result.error { color: var(--danger); }
-.result strong { color: var(--accent); font-size: 1.2rem; }
+.result strong {
+  color: var(--accent);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+/* 比價列表表頭區（清空鈕） */
+.card .row { align-items: center; }
 
 table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--border); }
+th, td { padding: 9px var(--sp-2); text-align: left; border-bottom: 1px solid var(--border); }
 th { color: var(--muted); font-weight: 500; }
-tr.best { background: var(--best); }
-.tag { color: var(--accent); font-size: 0.7rem; border: 1px solid var(--accent); border-radius: 999px; padding: 1px 6px; }
+tbody tr { transition: background var(--t-base); }
+tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+tr.best { background: var(--best); box-shadow: inset 3px 0 0 var(--best-line); }
+tr.best:hover { background: var(--best); }
+.tag {
+  color: var(--accent); font-size: 0.7rem;
+  border: 1px solid var(--accent); border-radius: var(--r-pill);
+  padding: 1px var(--sp-2); white-space: nowrap;
+}
 .snapshot { color: var(--muted); font-size: 0.75rem; }
-.del { width: auto; padding: 2px 8px; font-size: 0.75rem; background: transparent; color: var(--danger); border: 1px solid var(--danger); }
-.group-title { font-size: 0.8rem; color: var(--muted); margin: 12px 0 4px; }
-.empty { color: var(--muted); text-align: center; padding: 16px 0; }
+.del {
+  width: auto; padding: 3px var(--sp-2); font-size: 0.75rem;
+  background: transparent; color: var(--danger); border: 1px solid var(--danger);
+}
+.del:hover { background: rgba(248, 113, 113, 0.14); box-shadow: none; filter: none; }
+.group-title { font-size: 0.8rem; color: var(--muted); margin: var(--sp-3) 0 var(--sp-1); font-weight: 500; }
+.empty { color: var(--muted); text-align: center; padding: var(--sp-4) 0; }
+
+/* 尊重使用者「減少動態效果」偏好 */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
