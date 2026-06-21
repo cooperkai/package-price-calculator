@@ -38,7 +38,8 @@
 
 - [x] 5.1 使用 CSS 變數設計現代化的 UI 主題（深色模式、毛玻璃卡片、響應式 Flex/Grid 版面），字型採系統字型堆疊（不載入任何網路字型）。
   - 註：`css/styles.css` 擴充 CSS 變數（色彩／間距尺度／圓角／過渡／陰影）；環境光漸層背景襯托毛玻璃模糊、卡片頂緣高光稜邊；標題漸層字、按鈕漸層＋hover 浮起、輸入框 focus 光暈與過渡、表格列 hover 與最划算左邊條高亮；系統字型堆疊（含 Noto Sans TC／PingFang TC／微軟正黑體）零網路字型；加 `prefers-reduced-motion` 關閉動態。純樣式無紅燈單元測試，視覺/響應式斷言交 task 6.3 E2E。手機媒體查詢見 task 5.2。
-- [ ] 5.2 撰寫行動優先的媒體查詢（Media Queries），以支援單手在手機上流暢操作。
+- [x] 5.2 撰寫行動優先的媒體查詢（Media Queries），以支援單手在手機上流暢操作。
+  - 註：改為行動優先——`css/styles.css` 的 base 樣式以手機為準（緊湊內距、互動元件 `min-height: 44px` 觸控目標、輸入 ≥16px 避免 iOS 聚焦放大）；`@media (min-width: 600px)` 為平板／桌機加大留白與標題（向上增強）；`@media (max-width: 360px)` 壓縮欄距與表格字級避免擁擠。已用 Playwright 於 360/390/768 寬度截圖確認無溢出、觸控目標放大、寬螢幕回復寬鬆。視覺/響應式正式斷言交 task 6.3 E2E。
 - [x] 5.3 撰寫 Service Worker (`sw.js`) 並在網頁中註冊，實現離線快取：以版本號命名快取、`activate` 時清除舊版號快取、`index.html` 採網路優先（Network-First）策略以便部署新版後即時更新。
   - 註：`sw.js` 快取名 `price-calc-v1`、install 預快取靜態資源、activate 清非當前版本、導航/`index.html` 網路優先其餘快取優先；`index.html` 以相對路徑註冊。整合行為由 `e2e/pwa.spec.js`（task 6.2）驗證。
 
