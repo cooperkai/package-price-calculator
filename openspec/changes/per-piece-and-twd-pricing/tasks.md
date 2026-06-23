@@ -1,6 +1,6 @@
 ## 7. 計算引擎：基準一般化與件數每件單價
 
-- [ ] 7.1 `js/calc.js` 引入 `UNIT_META`（單位 → 分組＋克數）統一單位資料；`unitPrice({price, rate, quantity, unit})` 依分組計價——重量／容量回每 100g／100ml，件數「個」回每件單價（`price*rate/quantity`）。隨抽象正名 `unitPricePer100→unitPrice`、`weight→quantity`。案例：60 元 / 10 個 → 6.00、6 元 / 1 個 → 6.00、12 USD × 32.5 / 6 個 → 65.00；重量／容量既有期望值不變。
+- [x] 7.1 `js/calc.js` 引入 `UNIT_META`（單位 → 分組＋克數）統一單位資料；`unitPrice({price, rate, quantity, unit})` 依分組計價——重量／容量回每 100g／100ml，件數「個」回每件單價（`price*rate/quantity`）。隨抽象正名 `unitPricePer100→unitPrice`、`weight→quantity`。案例：60 元 / 10 個 → 6.00、6 元 / 1 個 → 6.00、12 USD × 32.5 / 6 個 → 65.00；重量／容量既有期望值不變。
 
 ## 8. 比價歷史：三類分組
 
