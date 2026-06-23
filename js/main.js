@@ -1,9 +1,9 @@
 // 介面接線：把已測過的純邏輯（validate / calc / history）接到 DOM。
 // 註：真實匯率 fetch、localStorage 持久化與離線屬整合層，交 Playwright E2E（task 6.x）。
 
-import { isValidPositiveNumber } from './validate.js'
+import { isValidPositiveNumber, isValidPositiveInteger } from './validate.js'
 import { unitPrice } from './calc.js'
-import { createItem, evaluate, groupByCategory } from './history.js'
+import { createItem, evaluate, groupByCategory, unitCategory } from './history.js'
 import { describeRateStatus } from './exchange-rate.js'
 
 const $ = (id) => document.getElementById(id)
@@ -11,6 +11,9 @@ const $ = (id) => document.getElementById(id)
 // 內建預設匯率（1 外幣 = N 台幣）。真實線上 fetch 與 localStorage 持久化屬整合層，交 task 6.x E2E；
 // 此處先以預設值種入，狀態顯示為「預設估計值，請手動校正」。
 const DEFAULT_RATES = { USD: 31.25, JPY: 0.21, EUR: 33.8, KRW: 0.023, CNY: 4.3, GBP: 39.5 }
+
+// 各分組的比較基準顯示標籤（重量每 100g、容量每 100mL、件數每件）
+const PER_LABEL = { weight: '100g', volume: '100mL', count: '件' }
 
 // 記憶體狀態
 const items = []
@@ -27,6 +30,7 @@ const els = {
   price: $('price'),
   currency: $('currency'),
   amount: $('amount'),
+  amountLabel: $('amount-label'),
   unit: $('unit'),
   rate: $('rate'),
   rateStatus: $('rate-status'),
@@ -78,13 +82,26 @@ function onCurrencyChange() {
   renderRateStatus()
 }
 
+/** 切換單位時，件數類把「重量／容量」標籤改為「數量（件）」並調整提示。 */
+function onUnitChange() {
+  const isCount = unitCategory(els.unit.value) === 'count'
+  els.amountLabel.textContent = isCount ? '數量（件）' : '重量／容量'
+  els.amount.placeholder = isCount ? '10' : '500'
+}
+
 /** 讀取並驗證表單，回傳乾淨的數值輸入；不合法則回傳 null 並顯示錯誤。 */
 function readForm() {
   const price = els.price.value
   const amount = els.amount.value
   const rate = els.rate.value
-  if (!isValidPositiveNumber(price) || !isValidPositiveNumber(amount) || !isValidPositiveNumber(rate)) {
-    showError('價格、重量／容量與匯率皆須為大於零的有限數字。')
+  const unit = els.unit.value
+  // 件數類（個）數量須為正整數；重量／容量類接受有限正數
+  const isCount = unitCategory(unit) === 'count'
+  const amountOk = isCount ? isValidPositiveInteger(amount) : isValidPositiveNumber(amount)
+  if (!isValidPositiveNumber(price) || !amountOk || !isValidPositiveNumber(rate)) {
+    showError(isCount
+      ? '價格與匯率須為大於零的數字，件數須為正整數。'
+      : '價格、重量／容量與匯率皆須為大於零的有限數字。')
     return null
   }
   return {
@@ -92,7 +109,7 @@ function readForm() {
     price: Number(price),
     currency: els.currency.value,
     quantity: Number(amount),
-    unit: els.unit.value,
+    unit,
     rate: Number(rate),
     timestamp: Date.now(),
   }
@@ -104,10 +121,9 @@ function showError(msg) {
 }
 
 function showResult(input) {
-  const per100 = unitPrice(input)
-  const per = input.unit === 'ml' || input.unit === 'l' ? '100ML' : '100G'
+  const per = PER_LABEL[unitCategory(input.unit)]
   els.result.classList.remove('error')
-  els.result.innerHTML = `每 ${per}：<strong>NT$ ${per100}</strong>`
+  els.result.innerHTML = `每 ${per}：<strong>NT$ ${unitPrice(input)}</strong>`
 }
 
 /** 計算單價（task 3.x 邏輯）並以手動匯率覆寫＋鎖定該幣別（task 2.4）。 */
@@ -154,8 +170,9 @@ function render() {
   const grouped = groupByCategory(evaluated)
 
   const sections = [
-    { title: '重量類（每 100G）', rows: grouped.weight, per: '100G' },
-    { title: '容量類（每 100ML）', rows: grouped.volume, per: '100ML' },
+    { title: '重量類（每 100g）', rows: grouped.weight, per: '100g' },
+    { title: '容量類（每 100mL）', rows: grouped.volume, per: '100mL' },
+    { title: '件數類（每件）', rows: grouped.count, per: '件' },
   ]
 
   els.history.innerHTML = sections
@@ -197,5 +214,7 @@ els.form.addEventListener('submit', onCalc)
 els.add.addEventListener('click', onAdd)
 els.clear.addEventListener('click', onClear)
 els.currency.addEventListener('change', onCurrencyChange)
+els.unit.addEventListener('change', onUnitChange)
 onCurrencyChange() // 初始：回填預設匯率並顯示狀態
+onUnitChange() // 初始：依當前單位設定數量標籤
 render()
