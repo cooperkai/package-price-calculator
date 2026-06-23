@@ -18,3 +18,14 @@ export function isValidPositiveNumber(raw) {
   if (n > Number.MAX_SAFE_INTEGER) return false
   return true
 }
+
+/**
+ * 判斷輸入是否為「正整數」。用於件數（單位「個」）——不接受小數（如 2.5 個）。
+ * 在有限正數的基礎上額外要求為整數。
+ * @param {unknown} raw 來自輸入欄位的原始值（可能為字串）
+ * @returns {boolean}
+ */
+export function isValidPositiveInteger(raw) {
+  if (!isValidPositiveNumber(raw)) return false
+  return Number.isInteger(Number(String(raw).trim()))
+}
