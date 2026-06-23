@@ -1,13 +1,18 @@
 // 計算引擎
 
-// 各單位對應的克數（ml/l 以密度 1g/ml 換算）
-const GRAMS_PER_UNIT = {
-  g: 1,
-  kg: 1000,
-  oz: 28.3495,
-  lb: 453.592,
-  ml: 1,
-  l: 1000,
+/**
+ * 單位中繼資料：所屬比較分組與（重量／容量類的）每單位克數。
+ * 比較基準依分組決定——weight/volume 比每 100 基準單位，count 比每 1 件。
+ * 件數類（個）無 grams，基準量即件數本身。
+ */
+export const UNIT_META = {
+  g: { category: 'weight', grams: 1 },
+  kg: { category: 'weight', grams: 1000 },
+  oz: { category: 'weight', grams: 28.3495 },
+  lb: { category: 'weight', grams: 453.592 },
+  ml: { category: 'volume', grams: 1 },
+  l: { category: 'volume', grams: 1000 },
+  個: { category: 'count' },
 }
 
 /**
@@ -17,9 +22,18 @@ const GRAMS_PER_UNIT = {
  * @returns {number} 對應的克數
  */
 export function toGrams(value, unit) {
-  const factor = GRAMS_PER_UNIT[unit]
-  if (factor === undefined) throw new Error(`未知單位: ${unit}`)
-  return value * factor
+  const meta = UNIT_META[unit]
+  if (meta === undefined || meta.grams === undefined) throw new Error(`未知單位: ${unit}`)
+  return value * meta.grams
+}
+
+/**
+ * 四捨五入至小數點後 2 位。
+ * @param {number} value
+ * @returns {number}
+ */
+function round2(value) {
+  return Math.round(value * 100) / 100
 }
 
 /**
@@ -30,15 +44,20 @@ export function toGrams(value, unit) {
  */
 export function pricePer100g({ price, rate, grams }) {
   // 每 100 克價格 = (外幣價格 * 正向匯率 / 重量克數) * 100，四捨五入至 2 位
-  const value = (price * rate / grams) * 100
-  return Math.round(value * 100) / 100
+  return round2((price * rate / grams) * 100)
 }
 
 /**
- * 由原始輸入（價格、匯率、重量、單位）直接算出每 100g 台幣單價。
- * @param {{ price: number, rate: number, weight: number, unit: string }} input
- * @returns {number} 四捨五入至小數點後 2 位的每 100g 台幣單價
+ * 由原始輸入算出該單位所屬分組的台幣比較單價。
+ * 重量／容量類回每 100g／100ml 單價；件數類（個）回每 1 件單價。
+ * @param {{ price: number, rate: number, quantity: number, unit: string }} input
+ * @returns {number} 四捨五入至小數點後 2 位的台幣比較單價
  */
-export function unitPricePer100({ price, rate, weight, unit }) {
-  return pricePer100g({ price, rate, grams: toGrams(weight, unit) })
+export function unitPrice({ price, rate, quantity, unit }) {
+  const meta = UNIT_META[unit]
+  if (meta === undefined) throw new Error(`未知單位: ${unit}`)
+  // 件數類：每 1 件單價 = 價格 * 匯率 / 件數
+  if (meta.category === 'count') return round2(price * rate / quantity)
+  // 重量／容量類：每 100 基準單位單價
+  return pricePer100g({ price, rate, grams: toGrams(quantity, unit) })
 }

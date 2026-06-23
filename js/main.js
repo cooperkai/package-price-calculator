@@ -2,7 +2,7 @@
 // 註：真實匯率 fetch、localStorage 持久化與離線屬整合層，交 Playwright E2E（task 6.x）。
 
 import { isValidPositiveNumber } from './validate.js'
-import { unitPricePer100 } from './calc.js'
+import { unitPrice } from './calc.js'
 import { createItem, evaluate, groupByCategory } from './history.js'
 import { describeRateStatus } from './exchange-rate.js'
 
@@ -91,7 +91,7 @@ function readForm() {
     name: els.name.value,
     price: Number(price),
     currency: els.currency.value,
-    weight: Number(amount),
+    quantity: Number(amount),
     unit: els.unit.value,
     rate: Number(rate),
     timestamp: Date.now(),
@@ -104,7 +104,7 @@ function showError(msg) {
 }
 
 function showResult(input) {
-  const per100 = unitPricePer100(input)
+  const per100 = unitPrice(input)
   const per = input.unit === 'ml' || input.unit === 'l' ? '100ML' : '100G'
   els.result.classList.remove('error')
   els.result.innerHTML = `每 ${per}：<strong>NT$ ${per100}</strong>`
@@ -181,8 +181,8 @@ function rowHtml(it) {
   const tag = it.isBestDeal ? ' <span class="tag">最划算</span>' : ''
   return `<tr${best}>
     <td>${escapeHtml(it.name)}${tag}</td>
-    <td>NT$ ${it.currentPricePer100}</td>
-    <td class="snapshot">NT$ ${it.snapshot.pricePer100}<br>（匯率 ${it.snapshot.rate}）</td>
+    <td>NT$ ${it.currentUnitPrice}</td>
+    <td class="snapshot">NT$ ${it.snapshot.unitPrice}<br>（匯率 ${it.snapshot.rate}）</td>
     <td><button class="del" data-index="${it._index}">刪除</button></td>
   </tr>`
 }

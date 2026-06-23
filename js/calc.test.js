@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { pricePer100g, toGrams, unitPricePer100 } from './calc.js'
+import { pricePer100g, toGrams, unitPrice } from './calc.js'
 
 describe('每 100g 單價計算（pricePer100g）', () => {
   it('外幣換算：10 USD、500g、匯率 32.5 → 65.00', () => {
@@ -22,17 +22,29 @@ describe('單位換算為克（toGrams，對應規格換算表）', () => {
   it('未知單位應丟出錯誤', () => expect(() => toGrams(1, 'foo')).toThrow())
 })
 
-describe('完整單價計算（unitPricePer100，對應規格 Scenario）', () => {
+describe('完整單價計算（unitPrice，對應規格 Scenario）', () => {
   it('TWD 標準：100 TWD、250 g → 40.00', () => {
-    expect(unitPricePer100({ price: 100, rate: 1, weight: 250, unit: 'g' })).toBe(40)
+    expect(unitPrice({ price: 100, rate: 1, quantity: 250, unit: 'g' })).toBe(40)
   })
   it('公斤換算：120 TWD、1.5 kg → 8.00', () => {
-    expect(unitPricePer100({ price: 120, rate: 1, weight: 1.5, unit: 'kg' })).toBe(8)
+    expect(unitPrice({ price: 120, rate: 1, quantity: 1.5, unit: 'kg' })).toBe(8)
   })
   it('盎司換算：10 TWD、8 oz → 4.41', () => {
-    expect(unitPricePer100({ price: 10, rate: 1, weight: 8, unit: 'oz' })).toBeCloseTo(4.41, 2)
+    expect(unitPrice({ price: 10, rate: 1, quantity: 8, unit: 'oz' })).toBeCloseTo(4.41, 2)
   })
   it('外幣換算：10 USD、500 g、匯率 32.5 → 65.00', () => {
-    expect(unitPricePer100({ price: 10, rate: 32.5, weight: 500, unit: 'g' })).toBe(65)
+    expect(unitPrice({ price: 10, rate: 32.5, quantity: 500, unit: 'g' })).toBe(65)
+  })
+})
+
+describe('件數類每件單價（unitPrice，單位「個」）', () => {
+  it('多件裝：60 元 / 10 個 → 每件 6.00', () => {
+    expect(unitPrice({ price: 60, rate: 1, quantity: 10, unit: '個' })).toBe(6)
+  })
+  it('單件與多件等價：6 元 / 1 個 → 每件 6.00', () => {
+    expect(unitPrice({ price: 6, rate: 1, quantity: 1, unit: '個' })).toBe(6)
+  })
+  it('外幣按件：12 USD、6 個、匯率 32.5 → 每件 65.00', () => {
+    expect(unitPrice({ price: 12, rate: 32.5, quantity: 6, unit: '個' })).toBe(65)
   })
 })
