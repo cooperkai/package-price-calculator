@@ -96,3 +96,47 @@ describe('以當前匯率即時重算並各組高亮最划算', () => {
     expect(best2).toBe('日B')
   })
 })
+
+describe('件數類分組與每件比價', () => {
+  const eggBig = { name: '大盒蛋', price: 60, currency: 'TWD', quantity: 10, unit: '個', rate: 1, timestamp: 1 }
+  const eggSmall = { name: '小盒蛋', price: 30, currency: 'TWD', quantity: 6, unit: '個', rate: 1, timestamp: 2 }
+
+  it('單位「個」歸入件數類 count', () => {
+    expect(unitCategory('個')).toBe('count')
+  })
+
+  it('createItem 件數類帶「每件」基準快照（60/10 → 每件 6）', () => {
+    const item = createItem(eggBig, 1)
+    expect(item.category).toBe('count')
+    expect(item.snapshot.unitPrice).toBe(6)
+    expect(item.snapshot.basis).toBe('每件')
+  })
+
+  it('groupByCategory 回三組，件數自成一組', () => {
+    const grouped = groupByCategory([createItem(eggBig, 1), createItem(eggSmall, 2)])
+    expect(grouped.count.map((i) => i.name)).toEqual(['大盒蛋', '小盒蛋'])
+  })
+
+  it('件數組內挑每件最低，不與重量類混比', () => {
+    const items = [
+      createItem(eggBig, 1), // 每件 6
+      createItem(eggSmall, 2), // 每件 5 ← 件數組最划算
+      createItem({ name: '米', price: 10, currency: 'TWD', quantity: 1, unit: 'kg', rate: 1, timestamp: 3 }, 3),
+    ]
+    const best = evaluate(items, { TWD: 1 }).filter((i) => i.isBestDeal).map((i) => i.name)
+    expect(best).toContain('小盒蛋')
+    expect(best).not.toContain('大盒蛋')
+    expect(best).toContain('米') // 重量組自成最划算，不受件數組影響
+  })
+})
+
+describe('快照基準標示 basis', () => {
+  it('重量類 → 每100g', () => {
+    const item = createItem({ name: '米', price: 10, currency: 'TWD', quantity: 1, unit: 'kg', rate: 1, timestamp: 1 }, 1)
+    expect(item.snapshot.basis).toBe('每100g')
+  })
+  it('容量類 → 每100ml', () => {
+    const item = createItem({ name: '油', price: 10, currency: 'TWD', quantity: 1, unit: 'l', rate: 1, timestamp: 1 }, 1)
+    expect(item.snapshot.basis).toBe('每100ml')
+  })
+})
