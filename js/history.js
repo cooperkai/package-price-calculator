@@ -1,37 +1,35 @@
 // 比價歷史
 // 對應 openspec comparison-history 規格：分組、即時重算、最划算評選、當時價快照。
 
-import { unitPrice } from './calc.js'
+import { unitPrice, UNIT_META } from './calc.js'
 
-// 各單位所屬的比較分組（重量類以每 100g、容量類以每 100ml 比較）
-const CATEGORY_BY_UNIT = {
-  g: 'weight',
-  kg: 'weight',
-  oz: 'weight',
-  lb: 'weight',
-  ml: 'volume',
-  l: 'volume',
+// 各分組的比較基準標示（供 UI 顯示與當時價回顧）
+const BASIS_LABEL = {
+  weight: '每100g',
+  volume: '每100ml',
+  count: '每件',
 }
 
 /**
- * 判斷單位屬於重量類（g/kg/oz/lb）或容量類（ml/l）。
+ * 判斷單位所屬分組（weight／volume／count）。
  * @param {string} unit
- * @returns {'weight'|'volume'}
+ * @returns {'weight'|'volume'|'count'}
  */
 export function unitCategory(unit) {
-  const category = CATEGORY_BY_UNIT[unit]
-  if (category === undefined) throw new Error(`未知單位: ${unit}`)
-  return category
+  const meta = UNIT_META[unit]
+  if (meta === undefined) throw new Error(`未知單位: ${unit}`)
+  return meta.category
 }
 
 /**
- * 由原始輸入建立比價項目，含「當時價」快照（當時匯率與當時單價）。
+ * 由原始輸入建立比價項目，含「當時價」快照（當時匯率、當時單價與分組基準）。
  * @param {{name:string, price:number, currency:string, quantity:number, unit:string, rate:number, timestamp:number}} input
  * @param {number} index 名稱為空時的預設編號
  * @returns {object}
  */
 export function createItem(input, index) {
   const { name, price, currency, quantity, unit, rate, timestamp } = input
+  const category = unitCategory(unit)
   return {
     name: name?.trim() ? name.trim() : `項目 ${index}`,
     price,
@@ -39,22 +37,23 @@ export function createItem(input, index) {
     quantity,
     unit,
     timestamp,
-    category: unitCategory(unit),
+    category,
     // 當時價快照：永久不變，僅供回顧，不作為排名依據
     snapshot: {
       rate,
       unitPrice: unitPrice({ price, rate, quantity, unit }),
+      basis: BASIS_LABEL[category],
     },
   }
 }
 
 /**
- * 依單位類型將項目分為重量類與容量類兩組。
+ * 依單位類型將項目分為重量類、容量類與件數類三組。
  * @param {object[]} items
- * @returns {{weight: object[], volume: object[]}}
+ * @returns {{weight: object[], volume: object[], count: object[]}}
  */
 export function groupByCategory(items) {
-  const grouped = { weight: [], volume: [] }
+  const grouped = { weight: [], volume: [], count: [] }
   for (const item of items) {
     grouped[unitCategory(item.unit)].push(item)
   }

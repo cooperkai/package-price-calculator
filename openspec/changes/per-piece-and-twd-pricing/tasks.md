@@ -4,7 +4,7 @@
 
 ## 8. 比價歷史：三類分組
 
-- [ ] 8.1 `js/history.js` 的 `groupByCategory` 回傳 `{weight, volume, count}` 三組；`evaluate` 涵蓋件數組（組內以每件單價挑最低、不跨組）；`createItem` 正名（`quantity`、`currentUnitPrice`）並於快照帶 `snapshot.basis`（每100g／每100ml／每件）。
+- [x] 8.1 `js/history.js` 的 `groupByCategory` 回傳 `{weight, volume, count}` 三組；`evaluate` 涵蓋件數組（組內以每件單價挑最低、不跨組）；`createItem` 正名（`quantity`、`currentUnitPrice`）並於快照帶 `snapshot.basis`（每100g／每100ml／每件）。
 - [ ] 8.2 件數正整數驗證：單位為「個」時數量須為正整數，小數／零／負值視為無效並停用計算與加入。
 
 ## 9. UI 接線
