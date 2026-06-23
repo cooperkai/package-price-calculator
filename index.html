@@ -33,6 +33,7 @@
           <label for="currency">幣別</label>
           <select id="currency">
             <option value="USD">USD</option>
+            <option value="TWD">TWD</option>
             <option value="JPY">JPY</option>
             <option value="EUR">EUR</option>
             <option value="KRW">KRW</option>
@@ -61,7 +62,7 @@
         </div>
       </div>
 
-      <div class="field">
+      <div class="field" id="rate-field">
         <label for="rate">匯率（1 外幣 = N 台幣）</label>
         <input type="text" id="rate" inputmode="decimal" placeholder="31.25" />
         <div class="rate-status" id="rate-status" aria-live="polite"></div>

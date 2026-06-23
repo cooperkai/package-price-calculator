@@ -10,7 +10,7 @@ const $ = (id) => document.getElementById(id)
 
 // 內建預設匯率（1 外幣 = N 台幣）。真實線上 fetch 與 localStorage 持久化屬整合層，交 task 6.x E2E；
 // 此處先以預設值種入，狀態顯示為「預設估計值，請手動校正」。
-const DEFAULT_RATES = { USD: 31.25, JPY: 0.21, EUR: 33.8, KRW: 0.023, CNY: 4.3, GBP: 39.5 }
+const DEFAULT_RATES = { USD: 31.25, TWD: 1, JPY: 0.21, EUR: 33.8, KRW: 0.023, CNY: 4.3, GBP: 39.5 }
 
 // 各分組的比較基準顯示標籤（重量每 100g、容量每 100mL、件數每件）
 const PER_LABEL = { weight: '100g', volume: '100mL', count: '件' }
@@ -33,6 +33,7 @@ const els = {
   amountLabel: $('amount-label'),
   unit: $('unit'),
   rate: $('rate'),
+  rateField: $('rate-field'),
   rateStatus: $('rate-status'),
   result: $('result'),
   add: $('add-btn'),
@@ -78,7 +79,15 @@ function renderRateStatus() {
 
 /** 切換幣別時，以該幣別現有匯率回填輸入框並刷新狀態。 */
 function onCurrencyChange() {
-  els.rate.value = rateState[els.currency.value].rate
+  const cur = els.currency.value
+  // 純台幣：匯率固定為 1、隱藏匯率欄位與狀態、不需換算
+  if (cur === 'TWD') {
+    els.rate.value = 1
+    els.rateField.style.display = 'none'
+    return
+  }
+  els.rateField.style.display = ''
+  els.rate.value = rateState[cur].rate
   renderRateStatus()
 }
 
@@ -131,8 +140,11 @@ function onCalc(e) {
   e.preventDefault()
   const input = readForm()
   if (!input) return
-  applyManualRate(input.currency, input.rate)
-  renderRateStatus()
+  // 純台幣免匯率：不套用手動匯率、不顯示匯率狀態
+  if (input.currency !== 'TWD') {
+    applyManualRate(input.currency, input.rate)
+    renderRateStatus()
+  }
   showResult(input)
 }
 
@@ -140,8 +152,10 @@ function onCalc(e) {
 function onAdd() {
   const input = readForm()
   if (!input) return
-  applyManualRate(input.currency, input.rate)
-  renderRateStatus()
+  if (input.currency !== 'TWD') {
+    applyManualRate(input.currency, input.rate)
+    renderRateStatus()
+  }
   showResult(input)
   items.push(createItem(input, seq++))
   render()
