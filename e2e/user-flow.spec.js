@@ -25,7 +25,7 @@ test.describe('使用者比價流程（task 6.1）', () => {
     await page.fill('#amount', '500')
     await page.fill('#rate', '31.25')
     await page.click('#calc-btn')
-    await expect(page.locator('#result')).toContainText('每 100G：NT$ 62.5')
+    await expect(page.locator('#result')).toContainText('每 100g：NT$ 62.5')
   })
 
   test('加入兩項並高亮最划算（較便宜者）', async ({ page }) => {
